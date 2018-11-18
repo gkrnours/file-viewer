@@ -7,6 +7,9 @@ class File(models.Model):
     ctime = models.DateTimeField(auto_now=True)
     file = models.FileField()
 
+    def __str__(self):
+        return "%s file: %s" % (self.type, self.name)
+
 
 class ImageFile(File):
     thumbnail = models.FileField(null=True)
