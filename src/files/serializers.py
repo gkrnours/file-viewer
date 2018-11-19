@@ -12,6 +12,8 @@ from .models import File, CSVFile, ImageFile
 
 logger = logging.getLogger(__name__)
 
+THUMBNAIL_SIZE = getattr(settings, 'THUMBNAIL_SIZE', (128, 128))
+
 
 def _head(file):
     """ Take a file-object, return 500 first characters as string """
@@ -40,33 +42,35 @@ class FileSerializer(serializers.HyperlinkedModelSerializer):
         msg = "Unsupported format (%s)" % value.content_type
         raise serializers.ValidationError(msg)
 
-    def _check_image(self, file):
+    @staticmethod
+    def _check_image(file):
         """ Internal: file have been detected as image, ask pillow opinion """
         try:
-            im = Image.open(file)
-        except IOError as e:
-            logger.exception(e)
+            Image.open(file)
+        except IOError as err:
+            logger.exception(err)
             raise serializers.ValidationError("Not an image")
 
-    def _is_csv(self, file):
+    @staticmethod
+    def _is_csv(file):
         """ Internal: see if python's CSV module can read the file """
         head = _head(file)
         try:
-            dialect = csv.Sniffer().sniff(head)
+            csv.Sniffer().sniff(head)
             file.seek(0)
         except csv.Error:
             raise serializers.ValidationError("Not a recognized CSV")
         return True
 
-    def validate(self, data):
+    def validate(self, attrs):
         """ Set a type for the incoming data matching the provided file """
-        logger.debug(('validate', data))
-        content_type = data["file"].content_type
+        logger.debug(('validate', attrs))
+        content_type = attrs["file"].content_type
         if content_type.startswith("image/"):
-            data["type"] = "image"
+            attrs["type"] = "image"
         elif content_type == "text/csv":
-            data["type"] = "csv"
-        return data
+            attrs["type"] = "csv"
+        return attrs
 
     # Create
     def create(self, validated_data):
@@ -78,34 +82,38 @@ class FileSerializer(serializers.HyperlinkedModelSerializer):
             return self._create_csv_file(validated_data)
         if validated_data["type"] == "image":
             return self._create_image_file(validated_data)
+        msg = "Unrecognized type, aborting"
+        raise RuntimeError(msg)
 
-    def _create_csv_file(self, validated_data):
+    @staticmethod
+    def _create_csv_file(validated_data):
         """ Create a CSV file with the first few characters available """
         head = _head(validated_data['file'])
         obj = CSVFile.objects.create(head=head, **validated_data)
         return obj
 
-    def _create_image_file(self, validated_data):
+    @staticmethod
+    def _create_image_file(validated_data):
         """ Create an Image file with a thumbnail """
         thumbnail = SimpleUploadedFile.from_dict({
-                        'filename':'tmp.jpeg', 'content':b''})
-        im = Image.open(validated_data["file"])
-        im.thumbnail((128, 128))
-        im.save(thumbnail, "JPEG")
+            'filename':'tmp.jpeg', 'content':b''})
+        image = Image.open(validated_data["file"])
+        image.thumbnail(THUMBNAIL_SIZE)
+        image.save(thumbnail, "JPEG")
         obj = ImageFile.objects.create(thumbnail=thumbnail, **validated_data)
         return obj
 
     # Read
-    def to_representation(self, obj):
+    def to_representation(self, instance):
         """ Inject extra field when retrieving from db """
-        data = super().to_representation(obj)
+        data = super().to_representation(instance)
         if data["type"] == "csv":
-            data["head"] = obj.csvfile.head
+            data["head"] = instance.csvfile.head
         if data["type"] == "image":
             request = self.context.get('request', None)
-            thumbnail = obj.imagefile.thumbnail
+            thumbnail = instance.imagefile.thumbnail
             url = thumbnail.url
             if request is not None:
-                url =  request.build_absolute_uri(url)
+                url = request.build_absolute_uri(url)
             data["thumbnail"] = url
         return data
