@@ -95,8 +95,9 @@ class FileSerializer(serializers.HyperlinkedModelSerializer):
     @staticmethod
     def _create_image_file(validated_data):
         """ Create an Image file with a thumbnail """
+        name = 'thumbnail_%s' % validated_data["file"].name
         thumbnail = SimpleUploadedFile.from_dict({
-            'filename':'tmp.jpeg', 'content':b''})
+            'filename': name, 'content':b''})
         image = Image.open(validated_data["file"])
         image.thumbnail(THUMBNAIL_SIZE)
         image.save(thumbnail, "JPEG")
