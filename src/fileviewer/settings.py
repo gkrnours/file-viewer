@@ -26,7 +26,7 @@ SECRET_KEY = secrets.SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = secrets.ALLOWED_HOSTS
 
 
 # Application definition
@@ -141,6 +141,9 @@ LOGGING = {
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/var/www/htdocs/static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = '/var/www/htdocs/media'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
