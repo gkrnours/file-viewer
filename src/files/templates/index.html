@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link rel="stylesheet" crossorigin="anonymous"
+		href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+		integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO">
+    <title>Hello, world!</title>
+</head>
+<body>
+
+	<!-- HEADER -->
+	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+		<a href="#" class="navbar-brand col-sm-3 col-md-2 mr-0">File Viewer</a>
+	</nav>
+
+	<main role="main" class="col-md-9 ml-sm-auto col-lg-10 mt-5 px-4">
+		<!-- LISTING -->
+		<h2>Files</h2>
+		<div class="table-responsive">
+			<table id="content" class="table table-striped table-sm">
+				<thead>
+					<tr>
+						<th data-field="name">Name</th>
+						<th data-field="type">Type</th>
+						<th data-field="ctime" data-format="date">
+							Creation date
+						</th>
+						<th data-format="button"></th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+			<nav id="page" aria-label="Files pagination" style="display:none;">
+				<ul class="nagination justify-content-end">
+				</ul>
+			</nav>
+		</div>
+
+		<!-- FORM -->
+		<!-- TODO
+		<form>
+		<h2>Add more</h2>
+		<div class="form-group">
+			<label for="fileName">Label:</label>
+			<input type="text" class="form-control" id="fileName">
+		</div>
+		<div class="form-group">
+			<label for="fileContent">File:</label>
+			<input type="file" class="form-control-file" id="fileContent">
+		</div>
+		<button type="submit" class="btn btn-primary">Save</button>
+		</form>
+		-->
+	</main>
+
+	<div class="modal" id="fileDetails" tabindex="-1" role="dialog"
+		aria-labelledby="modalTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<!-- MODAL HEADER -->
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalTitle" data-role="title">
+					</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<!-- MODAL BODY -->
+				<div class="modal-body" data-role="content">
+				</div>
+				<!-- MODAL FOOTER -->
+				<div class="modal-footer" data-role="footer">
+					<a class="btn btn-primary" data-role="download">
+						Download</a>
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+	integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+	crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+	integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+	crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+	integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+	crossorigin="anonymous"></script>
+<script src="/static/files/main.js"></script>
+</body>
+</html>
