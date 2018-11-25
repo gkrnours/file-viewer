@@ -18,6 +18,7 @@ function start() {
 
 	TABLE.addEventListener('click', on_open_file, true);
 	PAGINATION.addEventListener('click', on_change_page, true);
+	document.forms.ajax.addEventListener('change', on_change_filter, true);
 }
 
 // Event Listener, when changing page
@@ -25,6 +26,11 @@ function on_change_page() {
 	event.preventDefault();
 	// TODO handle real page and not just next/previous link
 	fetch_page(event.target.href);
+}
+
+// Event Listener, reload page when filter are changed
+function on_change_filter() {
+	fetch_page();
 }
 
 // Event Listener, when opening the details of a file
@@ -73,6 +79,10 @@ function fetch_page(page) {
 		url = BASE_URL + 'api/files/?limit='+PER_PAGE;
 		if (page) {
 			url += '&offset=' + PER_PAGE * parsed_page;
+		}
+		var filter = document.forms.ajax.elements.filter.value;
+		if (filter != 'all') {
+			url += '&type=' + filter;
 		}
 	}
 	var xhr = new XMLHttpRequest();
