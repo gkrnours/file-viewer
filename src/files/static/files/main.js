@@ -19,6 +19,7 @@ function start() {
 	TABLE.addEventListener('click', on_open_file, true);
 	PAGINATION.addEventListener('click', on_change_page, true);
 	document.forms.ajax.addEventListener('change', on_change_filter, true);
+	document.forms.send.addEventListener('submit', on_send_file, true);
 }
 
 // Event Listener, when changing page
@@ -31,6 +32,29 @@ function on_change_page() {
 // Event Listener, reload page when filter are changed
 function on_change_filter() {
 	fetch_page();
+}
+
+// Event Listener, time to upload a file
+function on_send_file() {
+	event.preventDefault();
+	var formData = new FormData(event.target);
+	var url = BASE_URL + 'api/files/';
+
+	var xhr = new XMLHttpRequest();
+	xhr.open('POST', url, true);
+	xhr.onload = function() {
+		if (this.status < 400) {
+			return this.onsuccess();
+		}
+		else {
+			return this.onerror();
+		}
+	}
+	xhr.onsuccess = function() {
+		fetch_page();
+	}
+
+	xhr.send(formData);
 }
 
 // Event Listener, when opening the details of a file
@@ -87,7 +111,6 @@ function fetch_page(page) {
 	}
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', url, true);
-	xhr.send();
 
 	xhr.onload = function() {
 		if (this.status == 200) {
@@ -99,7 +122,6 @@ function fetch_page(page) {
 	}
 	xhr.onsuccess = function() {
 		var data = JSON.parse(this.responseText);
-		console.log(data)
 
 		// Pagination
 		if (data.next || data.previous) {
@@ -137,4 +159,6 @@ function fetch_page(page) {
 			TABLE.tBodies[0].append(row);
 		}
 	}
+
+	xhr.send();
 }
