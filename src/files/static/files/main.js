@@ -4,7 +4,7 @@ var PAGINATION = null;
 var NEXT_LINK = null;
 var PREV_LINK = null;
 var MODAL = document.getElementById("fileDetails");
-var PER_PAGE = 3;
+var PER_PAGE = 5;
 
 document.addEventListener("DOMContentLoaded", start);
 
