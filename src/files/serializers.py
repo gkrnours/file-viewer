@@ -17,7 +17,8 @@ THUMBNAIL_SIZE = getattr(settings, 'THUMBNAIL_SIZE', (128, 128))
 
 def _head(file):
     """ Take a file-object, return 500 first characters as string """
-    return next(file.chunks(chunk_size=500)).decode('utf-8')
+    chunk = next(file.chunks(chunk_size=500)).decode('utf-8')
+    return chunk[:500]
 
 
 class FileSerializer(serializers.HyperlinkedModelSerializer):
@@ -56,9 +57,10 @@ class FileSerializer(serializers.HyperlinkedModelSerializer):
         """ Internal: see if python's CSV module can read the file """
         head = _head(file)
         try:
-            csv.Sniffer().sniff(head)
+            csv.Sniffer().sniff(head.split("\n")[0])
             file.seek(0)
-        except csv.Error:
+        except csv.Error as e:
+            logger.error(e)
             raise serializers.ValidationError("Not a recognized CSV")
         return True
 

@@ -70,6 +70,9 @@ function on_open_file() {
 		if (file.type == "image") {
 			body.innerHTML = "<img src='" + file.thumbnail + "'>";
 		}
+		else if (file.type == 'csv') {
+			body.innerHTML = '<pre>' + file.head + '</pre>';
+		}
 
 		var link = MODAL.querySelector("[data-role='download']");
 		link.href = file.file;
